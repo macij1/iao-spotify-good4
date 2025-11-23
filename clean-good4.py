@@ -97,7 +97,7 @@ df_filtered = df_filtered.drop_duplicates(subset=["text"])
 df_filtered = df_filtered[df_filtered["text"].str.len() < 10000]
 
 
-output_file = "spotify_labeled_clean.csv"
+output_file = "data/spotify_labeled_clean.csv"
 
 df_filtered.to_csv(
     output_file,
