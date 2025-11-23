@@ -13,19 +13,18 @@
 This project uses a reproducible Conda environment defined in environment.yml.
 To create and activate the environment, run the following commands:
 
-- Install Conda (if needed)
+#### Install Conda (if needed)
 
 You can use Anaconda or Miniconda:
 https://docs.conda.io/en/latest/miniconda.html
 
-- Create the environment
+#### Create the environment
 
 From the root of the repository:
 
-conda env create -f environment.yml
-
+`conda env create -f environment.yml`
 
 This will install all required dependencies with correct versions.
 
-- Activate the environment
-conda activate iao
+#### Activate the environment
+`conda activate iao`
