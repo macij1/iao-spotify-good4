@@ -3,7 +3,7 @@
 ## 📊 Data
 [Kaggle Dataset:  500K+ Spotify Songs with Lyrics,Emotions & More](https://www.kaggle.com/datasets/devdope/900k-spotify/data?select=spotify_dataset.csv)
 
-- Import the file `spotify_dataset.csv` into the data folder. 
+- Import the file `spotify_dataset.csv` into the `data` folder or from our Drive
 
 - Run the script `clean-good4.py` to obtain the cleansed csv
 
