@@ -1,6 +1,7 @@
 ================================================================================
-                    Proyecto EmoLyrics AI
+                    Proyecto EmoLyrics IAO - Grupo 6
 ================================================================================
+Nombres: Lucía Bachiller, Vicente Barbato, Juan Macías
 
 DESCRIPCIÓN DEL PROYECTO
 --------------------------------------------------------------------------------
@@ -27,6 +28,11 @@ ESTRUCTURA DE CARPETAS Y ARCHIVOS
    │
    ├── analysis.md
    │   └── Notas y resultados de análisis del dataset durante la limpieza.
+   │
+   ├── environment.yml
+   │   └── Archivo de configuración de Conda que define el entorno virtual
+   │       con todas las dependencias y versiones exactas del proyecto.
+   │       Permite recrear el entorno con: conda env create -f environment.yml
    │
    └── .gitignore
        └── Archivo de configuración de Git para excluir archivos del control
@@ -112,4 +118,184 @@ INSTRUCCIONES BÁSICAS PARA EJECUTAR LOS EXPERIMENTOS
 
 1. PREPARACIÓN DEL ENTORNO
    -----------------------
-   a) Crear entorno conda (r
+   a) Crear entorno conda desde environment.yml (recomendado):
+      conda env create -f environment.yml
+      conda activate iao
+
+   b) O instalar dependencias manualmente con pip:
+      pip install streamlit altair pandas matplotlib torch sentence-transformers
+      scikit-learn joblib numpy
+
+2. PREPARACIÓN DE DATOS
+   --------------------
+   a) Colocar el archivo spotify_dataset.csv en la carpeta data/
+      (descargar desde Kaggle: https://www.kaggle.com/datasets/devdope/900k-spotify/data)
+
+   b) Ejecutar el script de limpieza:
+      cd scripts
+      python clean-emotion.py
+      
+      Esto generará data/spotify_emotion_clean.csv
+
+   c) (Opcional) Para visualizar distribuciones:
+      python visualize-good4.py
+
+3. ENTRENAMIENTO DEL MODELO
+   -------------------------
+   a) Abrir el notebook Jupyter:
+      cd training
+      jupyter notebook emotion-classification-lyrics.ipynb
+
+   b) Ejecutar todas las celdas del notebook. El proceso incluye:
+      - Carga del dataset limpio
+      - Generación de embeddings con SentenceTransformer
+      - Entrenamiento de la red neuronal con validación cruzada
+      - Entrenamiento final del modelo usando el total del split de entrenamiento y evaluando con el split de test
+      - Guardado del modelo en training/models/
+
+   c) (Opcional) Probar inferencia:
+      python test_inference.py
+
+4. EJECUTAR LA APLICACIÓN WEB
+   ---------------------------
+   a) Desde la raíz del proyecto:
+      streamlit run app.py
+
+   b) La aplicación se abrirá automáticamente en el navegador en
+      http://localhost:8501
+
+   c) Funcionalidades disponibles:
+      - Pestaña "Analyze your lyrics": Introducir letras manualmente o
+        subir un archivo .txt y obtener el perfil emocional.
+      - Pestaña "Compare versions": Comparar diferentes versiones de letras
+        guardadas previamente.
+
+SOFTWARE, LIBRERÍAS Y VERSIONES UTILIZADAS
+--------------------------------------------------------------------------------
+
+Lenguaje y versión:
+   - Python 3.9+ (probado con Python 3.9 y 3.10)
+
+Librerías principales:
+   - streamlit >= 1.28.0
+     └── Framework para la aplicación web interactiva
+
+   - pandas >= 1.5.0
+     └── Manipulación y análisis de datos
+
+   - altair >= 5.0.0
+     └── Visualización de gráficos interactivos
+
+   - torch >= 2.0.0
+     └── Framework de aprendizaje profundo (PyTorch)
+
+   - sentence-transformers >= 2.2.0
+     └── Modelos pre-entrenados para embeddings de texto
+         Modelos utilizados:
+         - all-MiniLM-L6-v2 (384 dim)
+         - all-MiniLM-L12-v2 (384 dim)
+         - all-distilroberta-v1 (768 dim)
+         - all-mpnet-base-v2 (768 dim)
+
+   - scikit-learn >= 1.3.0
+     └── Preprocesamiento (StandardScaler) y métricas de evaluación
+
+   - joblib >= 1.3.0
+     └── Serialización de modelos y escaladores
+
+   - numpy >= 1.24.0
+     └── Operaciones numéricas
+
+   - matplotlib >= 3.7.0
+     └── Visualizaciones en scripts de análisis
+
+Herramientas adicionales:
+   - Jupyter Notebook / JupyterLab
+     └── Para ejecutar el notebook de entrenamiento
+
+   - Conda / Miniconda (opcional pero recomendado)
+     └── Gestión de entornos virtuales
+
+NOTAS RELEVANTES PARA LA CORRECTA REPRODUCCIÓN
+--------------------------------------------------------------------------------
+
+1. DATASET
+   --------
+   - El dataset original (spotify_dataset.csv) NO está incluido en el .zip debido
+     a su tamaño. Debe descargarse desde Kaggle:
+     https://www.kaggle.com/datasets/devdope/900k-spotify/data
+     Seleccionar el archivo spotify_dataset.csv y colocarlo en data/
+
+   - El dataset limpio (spotify_emotion_clean.csv) puede generarse ejecutando
+     clean-emotion.py, o puede estar incluido si se proporciona pre-procesado.
+
+2. MODELOS ENTRENADOS
+   -------------------
+   - Los modelos en training/models/ pueden tener un tamaño considerable
+     (varios MB cada uno). Se crearán una sola vez ejecutando el notebook emotion-classification-lyrics.ipynb.
+     Si es necesario, se pueden volver a crear cambiando la variable RECOMPUTE_EMBEDDINGS a True.
+    
+
+   - El modelo principal utilizado es emotion_classifier_v2.pt. Si se desea usar
+     otro modelo, modificar la ruta en test_inference.py o en emo_core.py
+     (función generate_emotion_scores).
+
+3. CONFIGURACIÓN DE RUTAS
+   -----------------------
+   - Los scripts asumen que se ejecutan desde la raíz del proyecto o desde su
+     directorio correspondiente (scripts/, training/).
+
+   - Si se ejecuta desde otra ubicación, ajustar las rutas relativas en:
+     * scripts/clean-emotion.py (INPUT_FILE, OUTPUT_FILE)
+     * scripts/clean-good4.py (ruta al CSV)
+     * training/test_inference.py (ruta al modelo)
+
+4. FUNCIONALIDAD ACTUAL DEL MODELO
+   ---------------------------------
+   - NOTA IMPORTANTE: En emo_core.py, la función generate_emotion_scores()
+     actualmente utiliza valores aleatorios como placeholder. Para usar el modelo
+     real, debe integrarse la lógica de carga del modelo y predicción similar a
+     la implementada en training/test_inference.py.
+
+   - Para integrar el modelo real:
+     1. Cargar el modelo y SentenceTransformer al inicio de la sesión
+     2. Modificar generate_emotion_scores() para usar el modelo cargado
+     3. Asegurar que el dispositivo (CPU/GPU) sea consistente
+
+5. RECURSOS DEL SISTEMA
+   --------------------
+   - El entrenamiento del modelo requiere memoria RAM suficiente (recomendado 8GB+)
+     y puede tardar varias horas dependiendo del hardware.
+
+   - La generación de embeddings puede ser lenta en CPU. Se recomienda GPU
+     (CUDA) si está disponible para acelerar el proceso.
+
+6. EMOCIONES DETECTADAS
+   --------------------
+   El modelo clasifica 6 emociones principales:
+   - Anger (Ira)
+   - Fear (Miedo)
+   - Joy (Alegría)
+   - Love (Amor)
+   - Sadness (Tristeza)
+   - Surprise (Sorpresa)
+
+7. FORMATO DE ENTRADA
+   ------------------
+   - La aplicación acepta texto plano en formato .txt o entrada manual.
+   - No hay restricciones de formato específico, pero se recomienda texto limpio
+     sin caracteres especiales problemáticos.
+
+8. NAVEGADOR
+   ----------
+   - La aplicación Streamlit funciona mejor en navegadores modernos
+     (Chrome, Firefox, Safari, Edge).
+
+9. PUERTO Y ACCESO
+   ----------------
+   - Por defecto, Streamlit usa el puerto 8501. Si está ocupado, Streamlit
+     intentará usar el siguiente puerto disponible (8502, 8503, etc.).
+
+================================================================================
+                              FIN DEL DOCUMENTO
+================================================================================
