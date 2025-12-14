@@ -1,0 +1,115 @@
+================================================================================
+                    Proyecto EmoLyrics AI
+================================================================================
+
+DESCRIPCIÓN DEL PROYECTO
+--------------------------------------------------------------------------------
+Este proyecto implementa un sistema de análisis emocional de letras de canciones
+utilizando modelos de aprendizaje profundo. Incluye una aplicación web interactiva
+construida con Streamlit que permite analizar letras y comparar diferentes versiones
+de las mismas para evaluar su perfil emocional.
+
+ESTRUCTURA DE CARPETAS Y ARCHIVOS
+--------------------------------------------------------------------------------
+
+📁 Raíz del proyecto
+   ├── app.py
+   │   └── Punto de entrada principal de la aplicación Streamlit. Configura la
+   │       página y gestiona las pestañas de análisis y comparación.
+   │
+   ├── emo_core.py
+   │   └── Módulo central que contiene la lógica de negocio: generación de scores
+   │       emocionales, renderizado de gráficos (Altair), gestión del estado de
+   │       sesión, y carga de plantillas HTML/CSS.
+   │
+   ├── README.md
+   │   └── Documentación básica del proyecto con instrucciones de instalación.
+   │
+   ├── analysis.md
+   │   └── Notas y resultados de análisis del dataset durante la limpieza.
+   │
+   └── .gitignore
+       └── Archivo de configuración de Git para excluir archivos del control
+           de versiones (__pycache__, modelos, etc.).
+
+📁 data/
+   ├── spotify_dataset.csv
+   │   └── Dataset original de Spotify con 500K+ canciones, letras y emociones.
+   │       Fuente: Kaggle (900k Spotify Songs with Lyrics, Emotions & More).
+   │
+   └── spotify_emotion_clean.csv
+       └── Dataset limpio generado por clean-emotion.py. Contiene letras
+           normalizadas y etiquetas emocionales validadas.
+
+📁 scripts/
+   ├── clean-emotion.py
+   │   └── Script de limpieza y preprocesamiento del dataset. Realiza:
+   │       - Normalización de etiquetas emocionales
+   │       - Eliminación de letras vacías o duplicadas
+   │       - Filtrado por longitud de texto (30-10000 caracteres)
+   │       - Eliminación de clases raras (<5000 muestras)
+   │       - Genera visualizaciones de distribución de emociones
+   │
+   ├── clean-good4.py
+   │   └── Script alternativo de limpieza para etiquetas "Good for" (Party,
+   │       Work/Study, Exercise, etc.). Filtra y normaliza el dataset original.
+   │
+   └── visualize-good4.py
+       └── Script de visualización que genera gráficos de barras para:
+           - Distribución de etiquetas "Good for"
+           - Top 50 artistas por número de canciones
+           - Top 30 géneros musicales
+
+📁 interface/
+   ├── ui.py
+   │   └── Módulo de interfaz de usuario que implementa las dos pestañas
+   │       principales: "Analyze your lyrics" y "Compare versions of lyrics".
+   │       Gestiona la entrada de texto, análisis y guardado de versiones.
+   │
+   ├── styles.css
+   │   └── Hoja de estilos CSS personalizada para la aplicación Streamlit.
+   │       Define el diseño visual, colores, tipografía (Inter) y componentes
+   │       personalizados (tarjetas, badges, etc.).
+   │
+   └── templates.html
+       └── Plantillas HTML reutilizables para el header de la aplicación y
+           las tarjetas de resultados emocionales.
+
+📁 training/
+   ├── emotion-classification-lyrics.ipynb
+   │   └── Notebook Jupyter con el pipeline completo de entrenamiento:
+   │       - Carga y preprocesamiento de datos
+   │       - Generación de embeddings con SentenceTransformers
+   │       - Entrenamiento de redes neuronales (LinearReLUDropoutLinearNet)
+   │       - Evaluación y guardado de modelos
+   │
+   ├── test_inference.py
+   │   └── Script de prueba para cargar modelos entrenados y realizar
+   │       inferencias sobre texto de ejemplo. Incluye la clase del modelo
+   │       y funciones de carga/predicción.
+   │
+   └── models/
+       ├── emotion_classifier_v2.pt
+       │   └── Modelo principal entrenado (checkpoint de PyTorch).
+       │
+       ├── emotion_classifier_all-MiniLM-L6-v2.pt
+       ├── emotion_classifier_all-MiniLM-L12-v2.pt
+       ├── emotion_classifier_all-distilroberta-v1.pt
+       ├── emotion_classifier_all-mpnet-base-v2.pt
+       │   └── Modelos alternativos entrenados con diferentes backbones de
+       │       SentenceTransformers.
+       │
+       └── scaler.joblib
+           └── Escalador StandardScaler guardado para normalizar embeddings
+               antes de la inferencia (si se utilizó durante el entrenamiento).
+
+📁 __pycache__/
+   └── Directorio generado automáticamente por Python con archivos .pyc
+       compilados (no incluido en el .zip, generado en ejecución).
+
+INSTRUCCIONES BÁSICAS PARA EJECUTAR LOS EXPERIMENTOS
+--------------------------------------------------------------------------------
+
+1. PREPARACIÓN DEL ENTORNO
+   -----------------------
+   a) Crear entorno conda (r

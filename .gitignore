@@ -3,3 +3,5 @@ runs/
 logs/
 data/
 copies_for_parallelization/
+__pycache__/
+.idea
